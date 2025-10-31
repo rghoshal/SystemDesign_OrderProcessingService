@@ -1,0 +1,43 @@
+_format_version: "3.0"
+
+services:
+  - name: order-service
+    url: http://order-service:3000
+    routes:
+      - name: orders-route
+        paths:
+          - /api/orders
+        methods:
+          - GET
+          - POST
+          - OPTIONS
+        strip_path: false
+    plugins:
+      - name: key-auth
+        config:
+          key_names:
+            - apikey
+      - name: rate-limiting
+        config:
+          minute: 100
+      - name: cors
+        config:
+          origins:
+            - "http://localhost:3001"
+          methods:
+            - GET
+            - POST
+            - OPTIONS
+          headers:
+            - Accept
+            - Content-Type
+            - apikey
+          exposed_headers:
+            - X-Auth-Token
+          credentials: true
+          max_age: 3600
+
+consumers:
+  - username: web-client
+    keyauth_credentials:
+      - key: 822b6c601ec5f570caac1fd9d6a434c1e436be01eb7a3e3030a62b5d624e0a9c

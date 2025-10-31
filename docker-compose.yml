@@ -1,0 +1,109 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: orders-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - microservices
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: orders-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - microservices
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mongodb-service:
+    build: ./mongodb-service
+    container_name: mongodb-service
+    ports:
+      - "4000:4000"
+    environment:
+      MONGODB_URL: mongodb://mongodb:27017
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  kong:
+    build: ./kong
+    container_name: orders-kong
+    ports:
+      - "8000:8000"
+      - "8001:8001"
+    networks:
+      - microservices
+
+  order-service:
+    build: ./order-service
+    container_name: orders-service
+    ports:
+      - "3000:3000"
+    environment:
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+      MONGODB_SERVICE_URL: http://mongodb-service:4000
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongodb-service:
+        condition: service_started
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  order-processor:
+    build: ./order-processor
+    container_name: orders-processor
+    environment:
+      RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672
+      MONGODB_SERVICE_URL: http://mongodb-service:4000
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongodb-service:
+        condition: service_started
+    networks:
+      - microservices
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: orders-frontend
+    ports:
+      - "3001:80"
+    environment:
+      REACT_APP_API_URL: http://localhost:8000
+    depends_on:
+      - kong
+    networks:
+      - microservices
+
+networks:
+  microservices:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  rabbitmq_data:
