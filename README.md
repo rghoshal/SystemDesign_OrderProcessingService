@@ -48,7 +48,7 @@ This setup demonstrates:
                            v
                 +----------------------+
                 |   Order Processor    |
-                | (Consumes, Stores)   |
+             | (Consumes, Stores)   |
                 |  Backend Golang code |
                 +----------+-----------+
                            |
@@ -86,18 +86,14 @@ The processed data can then be queried or visualized.
 
 🧰 Tech Stack
 Frontend: React.js
-Backend: Node.js
+Backend: Golang
 Message Broker: RabbitMQ
-Database: PostgreSQL
+Database: MariaDB
 Containerization: Docker Compose
 
-📜 License
-This project is licensed under the MIT License.
-
 🙌 Acknowledgements
-
 RabbitMQ Docs
 Docker Docs
-PostgreSQL Docs
+MariaDB Docs
 
 
