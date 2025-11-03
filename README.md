@@ -27,7 +27,7 @@ This setup demonstrates:
 ```text
                 +----------------------+
                 |     Frontend UI      |
-                |  (React / Node.js)   |
+                |  (React.js)          |
                 +----------+-----------+
                            |
                            |  (HTTP POST / API Call)
@@ -49,16 +49,20 @@ This setup demonstrates:
                 +----------------------+
                 |   Order Processor    |
                 | (Consumes, Stores)   |
+                |  Backend Golang code |
                 +----------+-----------+
                            |
                            |  (DB Write)
                            v
                 +----------------------+
-                |     PostgreSQL DB    |
+                |     Maria DB         |
                 +----------------------+
 
 ⚙️ Components
-ComponentDescriptionFrontendReact-based UI for submitting ordersOrder ServiceReceives orders and publishes messages to RabbitMQRabbitMQMessage queue for order communicationOrder ProcessorWorker service that consumes messages and writes to DBDatabasePostgreSQL instance storing processed orders
+ComponentDescriptionFrontend : React-based UI for submitting orders
+Order Service : Receives orders and publishes messages to RabbitMQ Message queue for order communication.
+Order Processor : Worker service that consumes messages and writes to DB
+Database : MariaDB instance storing processed orders
 
 🚀 Getting Started
 1️⃣ Clone the Repository
