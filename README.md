@@ -1,43 +1,99 @@
-# Order Processing Service
+# 🏗️ Order Processing Service
 
-The **Order Processing Service** in this repository is a minimalistic design that demonstrates key aspects of **system design** for an e-commerce application.
+![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)
+![RabbitMQ](https://img.shields.io/badge/RabbitMQ-FF6600?logo=rabbitmq&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?logo=postgresql&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-## 🧩 Components
+---
 
-The system contains the following components:
+## 🧩 Overview
 
-- **Front-End User Interaction**
-- **Message Queuing (RabbitMQ)**
-- **Database** containing key data
-- **Order Processor** with a consumption mechanism to read data from the queue and process it
-- **Order Service**
+The **Order Processing Service** is a minimalistic e-commerce system design showcasing key architectural concepts like **message queuing**, **containerization**, and **microservices communication**.
 
-## 🐳 Architecture
+This setup demonstrates:
+- **Front-End user interaction**
+- **Message queuing (RabbitMQ)**
+- **Database integration**
+- **Background order processing**
+- **Containerized architecture using Docker Compose**
 
-The entire architecture is **containerized** using Docker.
+---
 
-## 🚀 Steps to Run the Application
+## 🧠 Architecture Diagram
 
-1. **Pull the repository**
+```text
+                +----------------------+
+                |     Frontend UI      |
+                |  (React / Node.js)   |
+                +----------+-----------+
+                           |
+                           |  (HTTP POST / API Call)
+                           v
+                +----------------------+
+                |     Order Service    |
+                |   (Receives Orders)  |
+                +----------+-----------+
+                           |
+                           |  (Publishes to Queue)
+                           v
+                +----------------------+
+                |      RabbitMQ        |
+                | (Message Broker)     |
+                +----------+-----------+
+                           |
+                           |  (Consumed by Worker)
+                           v
+                +----------------------+
+                |   Order Processor    |
+                | (Consumes, Stores)   |
+                +----------+-----------+
+                           |
+                           |  (DB Write)
+                           v
+                +----------------------+
+                |     PostgreSQL DB    |
+                +----------------------+
 
-   ```bash
-   git clone <repo_url>
-   cd <repo_name>
+⚙️ Components
+ComponentDescriptionFrontendReact-based UI for submitting ordersOrder ServiceReceives orders and publishes messages to RabbitMQRabbitMQMessage queue for order communicationOrder ProcessorWorker service that consumes messages and writes to DBDatabasePostgreSQL instance storing processed orders
 
-2. **Build and Start The Container**
+🚀 Getting Started
+1️⃣ Clone the Repository
+git clone https://github.com/<your-username>/<repo-name>.git
+cd <repo-name>
 
+2️⃣ Build and Run with Docker
 docker compose build
 docker compose up
 
-3. **Open the UI**
-Visit http://localhost:3001
+3️⃣ Access the Application
+Frontend UI: http://localhost:3001
+RabbitMQ Dashboard: http://localhost:15672 (Default user: ****, password: ****)
 
-4. **Submit an order**
-Fill in the details in the UI (this will send a POST request).
-The item will be added to RabbitMQ queue.
+🧪 How It Works
+The user fills order details in the web UI.
+The Order Service sends the data via a POST request.
+The order is added to the RabbitMQ queue.
+The Order Processor consumes the message and stores it in the database.
+The processed data can then be queried or visualized.
 
-5. **Processing**
-The Order Processor consumes items from the queue.
+🧰 Tech Stack
+Frontend: React.js
+Backend: Node.js
+Message Broker: RabbitMQ
+Database: PostgreSQL
+Containerization: Docker Compose
+
+📜 License
+This project is licensed under the MIT License.
+
+🙌 Acknowledgements
+
+RabbitMQ Docs
+Docker Docs
+PostgreSQL Docs
 
 
-Processed orders are stored in the database.
