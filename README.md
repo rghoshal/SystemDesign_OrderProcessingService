@@ -23,3 +23,21 @@ The entire architecture is **containerized** using Docker.
    ```bash
    git clone <repo_url>
    cd <repo_name>
+
+2. **Build and Start The Container**
+
+docker compose build
+docker compose up
+
+3. **Open the UI**
+Visit http://localhost:3001
+
+4. **Submit an order**
+Fill in the details in the UI (this will send a POST request).
+The item will be added to RabbitMQ queue.
+
+5. **Processing**
+The Order Processor consumes items from the queue.
+
+
+Processed orders are stored in the database.
